@@ -57,7 +57,8 @@ module.exports = {
     isUserUniq: async (req, res, next) => {
         try {
             const {email} = req.body;
-            const user = await userService.getUserById({email});
+            const user = await userService.UpdateUser({email});
+            console.log(user)
             if (user) {
                 return next(new CustomError(`User with email ${email} is exist`, 409));
             }

@@ -32,11 +32,12 @@ async function CreatebyUser(req, res, next) {
 
 async function DeleteUserbyId(req, res, next) {
     try {
-        const {id} = req.params;
-        await userService.DeleteUser({id})
+        const { id } = req.params;
+        await userService.DeleteUser({ _id: id })
+
         res.sendStatus(204);
     } catch (e) {
-        next(e)
+        next(e);
     }
 }
 

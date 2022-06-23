@@ -7,13 +7,13 @@ module.exports = {
     getUserById: (params = {}) => {
         return Users.findById(params)
     },
-    UpdateUser: (params, userData, options = {new: true}) => {
-        return Users.findOneAndUpdate(params, userData, options)
+    UpdateUser: (params, userData, options = { new: true }) => {
+        return Users.findOneAndUpdate(params, userData, options);
     },
     CreateUser: (user) => {
         return Users.create(user)
     },
     DeleteUser: (params) => {
-        return User.deleteOne(params);
+        return Users.deleteOne(params);
     }
 }
