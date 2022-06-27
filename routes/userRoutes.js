@@ -8,7 +8,7 @@ userRouter.post("/", userMiddlewares.validUserForCreate, userMiddlewares.isUserU
 
 userRouter.get("/:id", commonMiddlewares.isIdValid, userMiddlewares.isUserPresent, userController.FindUserById);
 userRouter.put("/:id", commonMiddlewares.isIdValid, userMiddlewares.validUserForUpdate,
-    userMiddlewares.isUserPresent, userMiddlewares.isUserUniq, userController.UpdateUserById);
+    userMiddlewares.isUserPresent, userController.UpdateUserById);
 userRouter.delete("/:id", commonMiddlewares.isIdValid, userMiddlewares.isUserPresent, userController.DeleteUserbyId);
 ///isIdValid
 module.exports = userRouter;

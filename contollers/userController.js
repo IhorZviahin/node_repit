@@ -44,7 +44,7 @@ async function DeleteUserbyId(req, res, next) {
 async function UpdateUserById(req, res, next) {
     try {
         const {id} = req.params;
-        const updatedUser = await userService.UpdateUser({_id: id}, req.body);
+        const updatedUser = await userService.UpdateUser({_id: id}, req.dataforUpdate);
         res.status(201).json(updatedUser)
     } catch (e) {
         next(e)

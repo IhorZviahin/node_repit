@@ -48,6 +48,9 @@ module.exports = {
             if (name && name.length < 3) {
                 return res.status(400).json("Set valid name");
             }
+
+            req.dataforUpdate = {name,age}
+
             next();
         } catch (e) {
             next(e);
