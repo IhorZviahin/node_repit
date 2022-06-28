@@ -1,9 +1,12 @@
-const {userService} = require("../services");
+const {userService, passwordService} = require("../services");
+const {userPresenter} = require("../presenters/userPresenter");
 
 async function getFindUsers(req, res, next) {
     try {
-        const users = await userService.getAllUsers();
-        res.json(users);
+        console.log(req.query)
+        const users = await userService.getAllUsers(req.query).exec();
+        const UserForResponse = users.map(user =>userPresenter(user));
+        res.json(UserForResponse);
     } catch (e) {
         next(e)
     }
@@ -11,11 +14,10 @@ async function getFindUsers(req, res, next) {
 
 async function FindUserById(req, res, next) {
     try {
-        console.log('aaa')
         const {id} = req.params;
-        console.log(id)
         const users = await userService.getUserById(id)
-        res.json(users);
+        const UserForResponse = userPresenter(users)
+        res.json(UserForResponse);
     } catch (e) {
         next(e)
     }
@@ -23,8 +25,10 @@ async function FindUserById(req, res, next) {
 
 async function CreatebyUser(req, res, next) {
     try {
-        const newUser = await userService.CreateUser(req.body);
-        res.status(201).json(newUser);
+        const hash = await passwordService.hashPassword(req.body.password);
+        const newUser = await userService.CreateUser({...req.body, password:hash});
+        const UserForResponse = userPresenter(newUser)
+        res.status(201).json(UserForResponse);
     } catch (e) {
         next(e)
     }
@@ -44,8 +48,9 @@ async function DeleteUserbyId(req, res, next) {
 async function UpdateUserById(req, res, next) {
     try {
         const {id} = req.params;
-        const updatedUser = await userService.UpdateUser({_id: id}, req.dataforUpdate);
-        res.status(201).json(updatedUser)
+        const updatedUser = await userService.UpdateUser({_id: id}, req.body);
+        const UserForResponse = userPresenter(updatedUser)
+        res.status(201).json(UserForResponse)
     } catch (e) {
         next(e)
     }

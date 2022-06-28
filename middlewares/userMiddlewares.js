@@ -1,5 +1,6 @@
 const {userService} = require("../services");
 const CustomError = require("../errors/customsError");
+const {userValidator, queryValidator} = require("../validators");
 
 module.exports = {
     isUserPresent: async (req, res, next) => {
@@ -18,20 +19,11 @@ module.exports = {
 
     validUserForCreate: async (req, res, next) => {
         try {
-            const {age, name, password, email} = req.body;
-
-            if (!age || age < 0) {
-                return next(new CustomError("Set valid age"))
+            const {error, value} = userValidator.newUserValidator.validate(req.body);
+            if(error){
+                return next(new CustomError(error.details[0].message, 409));
             }
-            if (!name || name.length < 2) {
-                return next(new CustomError("Set valid name"))
-            }
-            if (!email || !email.includes("@")) {
-                return next(new CustomError("Set valid email"))
-            }
-            if (!password || password.length < 5) {
-                return next(new CustomError("Set valid password"))
-            }
+            req.body = value;
             next();
         } catch (e) {
             next(e);
@@ -40,17 +32,11 @@ module.exports = {
     },
     validUserForUpdate: async (req, res, next) => {
         try {
-            const {age, name} = req.body;
-
-            if (age && age < 0) {
-                return res.status(400).json("Set valid age");
+            const {error, value} = userValidator.updateUserValidator.validate(req.body);
+            if(error){
+                return next(new CustomError(error.details[0].message, 409));
             }
-            if (name && name.length < 3) {
-                return res.status(400).json("Set valid name");
-            }
-
-            req.dataforUpdate = {name,age}
-
+            req.body = value;
             next();
         } catch (e) {
             next(e);
@@ -70,5 +56,18 @@ module.exports = {
         } catch (e) {
             next(e);
         }
+    },
+    isUserQueryValid: async (req, res, next) => {
+        try {
+            const {error, value} = queryValidator.FindAll.validate(req.query);
+            if(error){
+                return next(new CustomError(error.details[0].message, 409));
+            }
+            req.query = value;
+            next();
+        } catch (e) {
+            next(e);
+        }
+
     },
 }
