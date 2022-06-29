@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const userRoutes = require('./routes/userRoutes')
+const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRouter');
 
 mongoose.connect('mongodb://localhost:27017/dec-2021');
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 
 app.use('*', (req, res) => {

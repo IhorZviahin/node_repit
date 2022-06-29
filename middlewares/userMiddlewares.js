@@ -16,7 +16,6 @@ module.exports = {
             next(e);
         }
     },
-
     validUserForCreate: async (req, res, next) => {
         try {
             const {error, value} = userValidator.newUserValidator.validate(req.body);
@@ -69,5 +68,18 @@ module.exports = {
             next(e);
         }
 
+    },
+    checkIsUserPresent: async (req, res, next) => {
+        try {
+            const {email} = req.body;
+            const user = await userService.UpdateUser({email});
+            if (!user) {
+                return next(new CustomError(`User with email ${email} not found`, 404));
+            }
+            req.user = user;
+            next();
+        } catch (e) {
+            next(e);
+        }
     },
 }
