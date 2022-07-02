@@ -6,6 +6,7 @@ module.exports = {
     isUserPresent: async (req, res, next) => {
         try {
             const {id} = req.params;
+            console.log(id)
             const user = await userService.getUserById({_id: id});
             if (!user) {
                 return next(new CustomError("User not found"));
@@ -31,6 +32,7 @@ module.exports = {
     },
     validUserForUpdate: async (req, res, next) => {
         try {
+            console.log(req)
             const {error, value} = userValidator.updateUserValidator.validate(req.body);
             if(error){
                 return next(new CustomError(error.details[0].message, 409));

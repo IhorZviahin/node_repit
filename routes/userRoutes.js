@@ -7,8 +7,12 @@ userRouter.get("/", userMiddlewares.isUserQueryValid, userController.getFindUser
 userRouter.post("/", userMiddlewares.validUserForCreate, userMiddlewares.isUserUniq, userController.CreatebyUser);
 
 userRouter.get("/:id", commonMiddlewares.isIdValid, userMiddlewares.isUserPresent, userController.FindUserById);
-userRouter.put("/:id", commonMiddlewares.isIdValid, userMiddlewares.validUserForUpdate,
-    userMiddlewares.isUserPresent, userController.UpdateUserById);
-userRouter.delete("/:id", commonMiddlewares.isIdValid, authMiddleware.checkAccessToken, userMiddlewares.isUserPresent, userController.DeleteUserbyId);
+userRouter.put("/:id",
+    commonMiddlewares.isIdValid,
+    authMiddleware.checkAccessTokens,
+    userMiddlewares.validUserForUpdate,
+    userMiddlewares.isUserPresent,
+    userController.UpdateUserById);
+userRouter.delete("/:id", commonMiddlewares.isIdValid, authMiddleware.checkAccessTokens, userMiddlewares.isUserPresent, userController.DeleteUserbyId);
 
 module.exports = userRouter;

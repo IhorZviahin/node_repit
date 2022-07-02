@@ -3,7 +3,7 @@ const {Schema, model} = require('mongoose');
 const OAuthSchema = new Schema({
         userId: {
             type: Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'user',
             required: true,
         },
         access_token: {

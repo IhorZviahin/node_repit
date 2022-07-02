@@ -20,7 +20,16 @@ function checkAccessToken(token = "") {
     }
 }
 
+function checkRefreshToken(token = "") {
+    try {
+        return jwt.verify(token, REFRESH_TOKEN_SECRET)
+    } catch (e) {
+        throw new CustomsError('Token not valid', 401)
+    }
+}
+
 module.exports = {
     checkAccessToken,
+    checkRefreshToken,
     generateAuthTokens,
 }
