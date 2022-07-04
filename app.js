@@ -1,10 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require("path");
+require("dotenv").config({path: path.join(process.cwd(), "environments", `${process.env.MODE}.env`)})
 
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRouter');
+const { configs } = require("./configs")
 
-mongoose.connect('mongodb://localhost:27017/dec-2021');
+mongoose.connect(configs.MONGO_URL);
 
 const app = express();
 
@@ -27,7 +30,7 @@ app.use((err, req, res, next) => {
         });
 });
 
-app.listen(5000, () => {
+app.listen(configs.PORT, () => {
     console.log("Hi");
 })
 
