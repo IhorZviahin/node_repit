@@ -13,6 +13,7 @@ userRouter.put("/:id",
     userMiddlewares.validUserForUpdate,
     userMiddlewares.isUserPresent,
     userController.UpdateUserById);
-userRouter.delete("/:id", commonMiddlewares.isIdValid, authMiddleware.checkAccessTokens, userMiddlewares.isUserPresent, userController.DeleteUserbyId);
+userRouter.delete("/:id", commonMiddlewares.isIdValid, authMiddleware.checkAccessTokens, userMiddlewares.isUserPresent,
+    userController.DeleteUserbyId);
 
 module.exports = userRouter;

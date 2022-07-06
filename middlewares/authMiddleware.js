@@ -1,50 +1,55 @@
 const CustomError = require("../errors/customsError");
-const {checkAccessToken, checkRefreshToken} = require('../services/tokenService')
-const Oauth = require('../database/OauthTokens')
+const {checkToken} = require('../services/tokenService')
+const OAuth = require('../database/OauthTokens')
 const {authValidator} = require("../validators");
 const {constants} = require("../configs");
+const {tokenTypeEnum} = require("../enums");
 
 module.exports = {
     checkAccessTokens: async (req, res, next) => {
         try {
-            const authToken = req.get(constants.Authorization);
-            if (!authToken) {
-                throw new CustomError("No token", 401)
-            }
-            checkAccessToken(authToken);
+            const access_token = req.get(constants.Authorization);
 
-            const tokenInfo = await Oauth.findOne({access_token: authToken}).populate('userId');
+            if (!access_token) {
+                return next(new CustomError('No token', 401));
+            }
+
+            checkToken(access_token);
+
+            const tokenInfo = await OAuth.findOne({ access_token }).populate('userId');
+
             if (!tokenInfo) {
-                throw new CustomError("Token not valid", 401);
+                return next(new CustomError('Token not valid', 401));
             }
 
             req.access_token = tokenInfo.access_token;
             req.user = tokenInfo.userId;
-
-            next()
+            next();
         } catch (e) {
-            next(e)
+            next(e);
         }
     },
+
     checkRefreshTokens: async (req, res, next) => {
         try {
-            const refreshToken = req.get(constants.Authorization);
-            if (!refreshToken) {
-                throw new CustomError("No token", 401)
-            }
-            checkRefreshToken(refreshToken);
+            const refresh_token = req.get(constants.Authorization);
 
-            const tokenInfo = await Oauth.findOne({refresh_token: refreshToken});
-            console.log(tokenInfo)
+            if (!refresh_token) {
+                return next(new CustomError('No token', 401));
+            }
+
+            checkToken(refresh_token, tokenTypeEnum.REFRESH);
+
+            const tokenInfo = await OAuth.findOne({ refresh_token });
+
             if (!tokenInfo) {
-                throw new CustomError("Token not valid", 401);
+                return next(new CustomError('Token not valid', 401));
             }
 
             req.tokenInfo = tokenInfo;
-
-            next()
+            next();
         } catch (e) {
-            next(e)
+            next(e);
         }
     },
     isLoginBodyValidator: async (req, res, next) =>{

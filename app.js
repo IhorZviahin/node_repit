@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-require("dotenv").config({path: path.join(process.cwd(), "environments", `${process.env.MODE}.env`)})
+//require('dotenv').config({ path: path.join(process.cwd(), 'environments', `${process.env.MODE}.env`)})
+require('dotenv').config({ path: path.join(process.cwd(), 'environments', `dev.env`)})
+
 
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRouter');
@@ -31,6 +33,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(configs.PORT, () => {
-    console.log("Hi");
+    console.log(`Hi my PORT ${configs.PORT}`);
 })
 
