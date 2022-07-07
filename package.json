@@ -2,8 +2,8 @@
   "name": "node_repit",
   "version": "1.0.0",
   "scripts": {
-    "start:dev": "set MODE=dev&& nodemon .",
-    "start:prod": "set MODE=prod&& nodemon ."
+    "start:dev": "set MODE=dev&& nodemon ./app.js",
+    "start:prod": "set MODE=prod&& node ."
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

@@ -30,7 +30,7 @@ async function CreatebyUser(req, res, next) {
         const hash = await passwordService.hashPassword(password);
         const newUser = await userService.CreateUser({...req.body, password: hash});
 
-        await emailService.sendMail(email, emailActionsTypeEnum.WELCOME, {name})
+        await emailService.sendMail(email, emailActionsTypeEnum.WELCOME, { name });
 
         const UserForResponse = userPresenter(newUser)
         res.status(201).json(UserForResponse);

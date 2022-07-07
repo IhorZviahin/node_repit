@@ -1,5 +1,5 @@
 module.exports={
     userService: require("./userService"),
     passwordService: require("./passwordService"),
-    emailService: require("./emailService")
+    emailService: require("./emailService"),
 }

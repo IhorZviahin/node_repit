@@ -1,16 +1,23 @@
-const {emailActionsTypeEnum} = require("../enums");
+const {emailActionsTypeEnum} = require('../enums')
 
 module.exports = {
     [emailActionsTypeEnum.WELCOME]: {
-        subject: "Welcome om board",
-        template: "welcome"
+        subject: 'Welсome on board',
+        template: 'welcome'
     },
+
     [emailActionsTypeEnum.FORGOT_PASSWORD]: {
-        subject: "Forgot password",
-        template: "forgot-password"
+        subject: 'Opps looks like you forgot password',
+        template: 'forgot-password'
     },
+
     [emailActionsTypeEnum.USER_BANNED]: {
-        subject: "Account was blocked",
-        template: "account-blocked"
+        subject: 'Account was blocked',
+        template: 'account-blocked'
+    },
+
+    [emailActionsTypeEnum.LOGOUT]: {
+        subject: 'User was logout',
+        template: 'logout'
     },
 }

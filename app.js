@@ -1,14 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const path = require("path");
+const path = require('path');
 //require('dotenv').config({ path: path.join(process.cwd(), 'environments', `${process.env.MODE}.env`)})
 require('dotenv').config({ path: path.join(process.cwd(), 'environments', `dev.env`)})
-
 
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRouter');
 const { configs } = require("./configs")
-
+console.log(configs)
 mongoose.connect(configs.MONGO_URL);
 
 const app = express();
