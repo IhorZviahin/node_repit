@@ -1,6 +1,7 @@
 const {generateAuthTokens} = require("../services/tokenService");
 const passwordService = require("../services/passwordService");
 const OAuth = require("../database/OauthTokens");
+const {emailService} = require("../services");
 
 
 module.exports = {
@@ -8,6 +9,8 @@ module.exports = {
         try {
             const {password: hashPassword, _id} = req.user;
             const {password} = req.body;
+
+            await emailService.sendMail();
 
             await passwordService.comparePassword(hashPassword, password);
 
