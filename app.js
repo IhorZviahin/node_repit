@@ -1,8 +1,9 @@
+require('dotenv').config()
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require('path');
 //require('dotenv').config({ path: path.join(process.cwd(), 'environments', `${process.env.MODE}.env`)})
-require('dotenv').config({ path: path.join(process.cwd(), 'environments', `dev.env`)})
+//require('dotenv').config({ path: path.join(process.cwd(), 'environments', `.env`)})
 
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRouter');
