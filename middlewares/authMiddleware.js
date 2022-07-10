@@ -1,6 +1,7 @@
 const CustomError = require("../errors/customsError");
-const {checkToken} = require('../services/tokenService')
+const {checkToken, checkActionToken} = require('../services/tokenService')
 const OAuth = require('../database/OauthTokens')
+const actionTokens = require('../database/actionTokens')
 const {authValidator} = require("../validators");
 const {constants} = require("../configs");
 const {tokenTypeEnum} = require("../enums");
@@ -16,7 +17,7 @@ module.exports = {
 
             checkToken(access_token);
 
-            const tokenInfo = await OAuth.findOne({ access_token }).populate('userId');
+            const tokenInfo = await OAuth.findOne({access_token}).populate('userId');
 
             if (!tokenInfo) {
                 return next(new CustomError('Token not valid', 401));
@@ -40,7 +41,7 @@ module.exports = {
 
             checkToken(refresh_token, tokenTypeEnum.REFRESH);
 
-            const tokenInfo = await OAuth.findOne({ refresh_token });
+            const tokenInfo = await OAuth.findOne({refresh_token});
 
             if (!tokenInfo) {
                 return next(new CustomError('Token not valid', 401));
@@ -52,7 +53,8 @@ module.exports = {
             next(e);
         }
     },
-    isLoginBodyValidator: async (req, res, next) =>{
+
+    isLoginBodyValidator: async (req, res, next) => {
         try {
             const {error, value} = await authValidator.login.validate(req.body);
             if (error) {
@@ -60,8 +62,27 @@ module.exports = {
             }
             req.body = value;
             next();
-        }catch (e){
+        } catch (e) {
             next(e)
         }
-    }
+    },
+    checkActionToken: (actionType) => async (req, res, next) => {
+        try {
+            const action_token = req.get(constants.Authorization);
+            if (!action_token) {
+                return next(new CustomError('No token', 401));
+            }
+            checkActionToken(action_token, actionType)
+
+            const tokenInfo = await actionTokens.findOne({token: action_token}).populate('userId');
+
+            if (!tokenInfo) {
+                return next(new CustomError('Token not valid', 401));
+            }
+            req.user = tokenInfo.userId;
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
 }

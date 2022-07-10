@@ -1,7 +1,10 @@
-const {generateAuthTokens} = require("../services/tokenService");
+const {generateAuthTokens, generateActionToken} = require("../services/tokenService");
 const passwordService = require("../services/passwordService");
 const OAuth = require("../database/OauthTokens");
-
+const actionTokens = require("../database/actionTokens");
+const users = require("../database/users");
+const {emailService} = require("../services");
+const {emailActionsTypeEnum} = require("../enums")
 
 module.exports = {
     login: async (req, res, next) => {
@@ -26,6 +29,42 @@ module.exports = {
             next(e)
         }
     },
+
+    forgotPassword: async (req, res, next) => {
+        try {
+            const {_id, name, email} = req.user;
+            console.log(req.user)
+
+            const token = generateActionToken(emailActionsTypeEnum.FORGOT_PASSWORD, {name, _id});
+
+            await actionTokens.create({
+                userId: _id,
+                token,
+                actionType: emailActionsTypeEnum.FORGOT_PASSWORD,
+            })
+
+            await emailService.sendMail(email, emailActionsTypeEnum.FORGOT_PASSWORD, {name, token});
+
+            res.json("ok")
+        } catch (e) {
+            next(e)
+        }
+    },
+    setForgotPassword: async (req, res, next) => {
+        try {
+            const { _id } = req.user;
+            const { password } = req.body;
+
+            const hashPassword = await passwordService.hashPassword(password);
+            const updatedUser = await users.findByIdAndUpdate(_id,{ password: hashPassword }, {new: true});
+
+            await actionTokens.deleteOne({actionType: emailActionsTypeEnum.FORGOT_PASSWORD, userId: _id});
+            res.json(updatedUser)
+        } catch (e) {
+            next(e)
+        }
+    },
+
     refreshToken: async (req, res, next) => {
         try {
             const {userId, refresh_token} = req.tokenInfo;

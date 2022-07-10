@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
-const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require("../configs/config")
-const {tokenTypeEnum} = require("../enums");
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, FORGOT_PASS_ACTION_SECRET} = require("../configs/config")
+const {tokenTypeEnum, emailActionsTypeEnum} = require("../enums");
 const {configs} = require("../configs");
 const CustomError = require("../errors/customsError");
 
@@ -34,8 +34,8 @@ function checkToken(token = '', tokenType = tokenTypeEnum.ACCESS) {
     try {
         let secret;
 
-        if(tokenType === tokenTypeEnum.ACCESS) secret = configs.ACCESS_TOKEN_SECRET;
-        if(tokenType === tokenTypeEnum.REFRESH) secret = configs.REFRESH_TOKEN_SECRET;
+        if (tokenType === tokenTypeEnum.ACCESS) secret = configs.ACCESS_TOKEN_SECRET;
+        if (tokenType === tokenTypeEnum.REFRESH) secret = configs.REFRESH_TOKEN_SECRET;
 
         return jwt.verify(token, secret);
     } catch (e) {
@@ -43,7 +43,38 @@ function checkToken(token = '', tokenType = tokenTypeEnum.ACCESS) {
     }
 }
 
+function generateActionToken(actionType, payload = {}) {
+    let sectretWord = "";
+    let expiresIn = "7d";
+
+    switch (actionType) {
+        case emailActionsTypeEnum.FORGOT_PASSWORD:
+            sectretWord = FORGOT_PASS_ACTION_SECRET;
+            break
+        default:
+            throw new CustomError("wrong action type", 500);
+    }
+
+    return jwt.sign(payload, sectretWord, {expiresIn: expiresIn});
+
+}
+
+function checkActionToken(token = "", actionType) {
+    let sectretWord = "";
+
+    switch (actionType) {
+        case emailActionsTypeEnum.FORGOT_PASSWORD:
+            sectretWord = FORGOT_PASS_ACTION_SECRET;
+            break;
+        default:
+            throw new CustomError("wrong action type", 500);
+    }
+    return jwt.verify(token, sectretWord)
+}
+
 module.exports = {
     checkToken,
-    generateAuthTokens
+    checkActionToken,
+    generateActionToken,
+    generateAuthTokens,
 }
