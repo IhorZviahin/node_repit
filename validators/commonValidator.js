@@ -16,4 +16,5 @@ module.exports = {
         .lowercase()
         .trim(),
     passwordValidator: Joi.string().regex(constants.PASSWORD_REGEX).required().trim(),
+    phoneValidator: Joi.string().regex(constants.PHONE_REGEX).required().trim(),
 }

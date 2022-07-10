@@ -1,6 +1,7 @@
-const {userService, passwordService, emailService} = require("../services");
+const {userService, passwordService, emailService, smsService} = require("../services");
 const {userPresenter} = require("../presenters/userPresenter");
-const {emailActionsTypeEnum} = require("../enums");
+const {emailActionsTypeEnum, smsActionsTypeEnum} = require("../enums");
+const {smsTemplateBuilder} = require("../common");
 
 async function getFindUsers(req, res, next) {
     try {
@@ -26,11 +27,14 @@ async function FindUserById(req, res, next) {
 
 async function CreatebyUser(req, res, next) {
     try {
-        const {email, password, name} = req.body
+        const {email, password, name, phone} = req.body
         const hash = await passwordService.hashPassword(password);
         const newUser = await userService.CreateUser({...req.body, password: hash});
 
-        await emailService.sendMail(email, emailActionsTypeEnum.WELCOME, { name });
+       const sms = smsTemplateBuilder[smsActionsTypeEnum.WELCOME]({name})
+
+       await smsService.sendSMS(phone, sms)
+        //await emailService.sendMail(email, emailActionsTypeEnum.WELCOME, { name });
 
         const UserForResponse = userPresenter(newUser)
         res.status(201).json(UserForResponse);
