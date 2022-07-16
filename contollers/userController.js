@@ -2,6 +2,8 @@ const {userService, passwordService, emailService, smsService} = require("../ser
 const {userPresenter} = require("../presenters/userPresenter");
 const {emailActionsTypeEnum, smsActionsTypeEnum} = require("../enums");
 const {smsTemplateBuilder} = require("../common");
+const {uploadFile} = require("../services/s3Service");
+const {Users} = require("../database");
 
 async function getFindUsers(req, res, next) {
     try {
@@ -28,15 +30,21 @@ async function FindUserById(req, res, next) {
 async function CreatebyUser(req, res, next) {
     try {
         const {email, password, name, phone} = req.body
+        console.log(req.files)
+        const avatar = "cw";
+
         const hash = await passwordService.hashPassword(password);
         const newUser = await userService.CreateUser({...req.body, password: hash});
+        const {_id} = newUser;
+        const {Location} = await uploadFile(req.files.Avatar, 'user', _id);
+        const updateUserWithPhoto = await Users.findByIdAndUpdate(_id, {avatar: Location}, {new: true})
 
-       const sms = smsTemplateBuilder[smsActionsTypeEnum.WELCOME]({name})
+        //const sms = smsTemplateBuilder[smsActionsTypeEnum.WELCOME]({name})
+        //await smsService.sendSMS(phone, sms)
 
-       await smsService.sendSMS(phone, sms)
         //await emailService.sendMail(email, emailActionsTypeEnum.WELCOME, { name });
 
-        const UserForResponse = userPresenter(newUser)
+        const UserForResponse = userPresenter(updateUserWithPhoto)
         res.status(201).json(UserForResponse);
     } catch (e) {
         next(e)

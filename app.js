@@ -1,6 +1,7 @@
 //require('dotenv').config()
 //require('dotenv').config({ path: path.join(process.cwd(), 'environments', `${process.env.MODE}dev.env`)})
 const express = require("express");
+const expressFileUpload = require("express-fileupload");
 const mongoose = require("mongoose");
 const path = require('path');
 require('dotenv').config({ path: path.join(process.cwd(), 'environments', `dev.env`)})
@@ -8,7 +9,7 @@ require('dotenv').config({ path: path.join(process.cwd(), 'environments', `dev.e
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRouter');
 const { configs } = require("./configs")
-console.log(configs)
+
 mongoose.connect(configs.MONGO_URL);
 
 const app = express();
@@ -16,6 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+app.use(expressFileUpload())
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 

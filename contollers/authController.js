@@ -34,6 +34,7 @@ module.exports = {
         try {
             const {_id, name, email} = req.user;
             console.log(req.user)
+            console.log(_id)
 
             const token = generateActionToken(emailActionsTypeEnum.FORGOT_PASSWORD, {name, _id});
 
@@ -43,7 +44,7 @@ module.exports = {
                 actionType: emailActionsTypeEnum.FORGOT_PASSWORD,
             })
 
-            await emailService.sendMail(email, emailActionsTypeEnum.FORGOT_PASSWORD, {name, token});
+            //await emailService.sendMail(email, emailActionsTypeEnum.FORGOT_PASSWORD, {name, token});
 
             res.json("ok")
         } catch (e) {
