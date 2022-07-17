@@ -1,8 +1,8 @@
-const {userService, passwordService, emailService, smsService} = require("../services");
+const {userService, passwordService, emailService, smsService, S3Service} = require("../services");
 const {userPresenter} = require("../presenters/userPresenter");
 const {emailActionsTypeEnum, smsActionsTypeEnum} = require("../enums");
 const {smsTemplateBuilder} = require("../common");
-const {uploadFile} = require("../services/s3Service");
+const {uploadFile, updateFile} = require("../services/s3Service");
 const {Users} = require("../database");
 
 async function getFindUsers(req, res, next) {
@@ -30,13 +30,11 @@ async function FindUserById(req, res, next) {
 async function CreatebyUser(req, res, next) {
     try {
         const {email, password, name, phone} = req.body
-        console.log(req.files)
-        const avatar = "cw";
 
         const hash = await passwordService.hashPassword(password);
         const newUser = await userService.CreateUser({...req.body, password: hash});
         const {_id} = newUser;
-        const {Location} = await uploadFile(req.files.Avatar, 'user', _id);
+        const {Location} = await uploadFile(req.files.avatar, 'user', _id);
         const updateUserWithPhoto = await Users.findByIdAndUpdate(_id, {avatar: Location}, {new: true})
 
         //const sms = smsTemplateBuilder[smsActionsTypeEnum.WELCOME]({name})
@@ -65,6 +63,15 @@ async function DeleteUserbyId(req, res, next) {
 async function UpdateUserById(req, res, next) {
     try {
         const {id} = req.params;
+        if (req.files?.avatar) { //якщо маємо аватара
+            if (req.user.avatar) {  // якщо маємо
+                const {Location} = await uploadFile(req.files.avatar, 'user', id);
+                req.body.avatar = Location;
+            } else {
+                const {Location} = await S3Service.updateFile(req.files.avatar, req.user.avatar);
+                req.body.avatar = Location;
+            }
+        }
         const updatedUser = await userService.UpdateUser({_id: id}, req.body);
         const UserForResponse = userPresenter(updatedUser)
         res.status(201).json(UserForResponse)

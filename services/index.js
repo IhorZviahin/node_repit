@@ -3,4 +3,5 @@ module.exports={
     passwordService: require("./passwordService"),
     emailService: require("./emailService"),
     smsService: require("./smsService"),
+    S3Service: require("./s3Service"),
 }
