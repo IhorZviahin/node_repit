@@ -33,9 +33,20 @@ const updateFile = async (file, FileURL) => {
         .promise()
 }
 
+const deleteFile = async (FileURL) => {
+    const path = FileURL.split(AWS_S3_BUCKET_URL).pop()
+    return BucketConfig
+        .deleteObject({
+        Bucket: AWS_S3_BUCKET,
+        Key:path,
+    })
+        .promise()
+}
+
 module.exports = {
     uploadFile,
-    updateFile
+    updateFile,
+    deleteFile
 }
 
 function _buildFilePath(fileName, itemType, itemId) {

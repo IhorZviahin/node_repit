@@ -38,9 +38,13 @@ async function CreatebyUser(req, res, next) {
         const updateUserWithPhoto = await Users.findByIdAndUpdate(_id, {avatar: Location}, {new: true})
 
         //const sms = smsTemplateBuilder[smsActionsTypeEnum.WELCOME]({name})
-        //await smsService.sendSMS(phone, sms)
 
-        //await emailService.sendMail(email, emailActionsTypeEnum.WELCOME, { name });
+        // Promise.allSettled(
+        //     [
+        //         smsService.sendSMS(phone, sms),
+        //         emailService.sendMail(email, emailActionsTypeEnum.WELCOME, { name })
+        //     ]
+        // )
 
         const UserForResponse = userPresenter(updateUserWithPhoto)
         res.status(201).json(UserForResponse);
@@ -53,7 +57,9 @@ async function DeleteUserbyId(req, res, next) {
     try {
         const {id} = req.params;
         await userService.DeleteUser({_id: id})
-
+        if (req.user.avatar) {
+            await S3Service.deleteFile(req.user.avatar);
+        }
         res.sendStatus(204);
     } catch (e) {
         next(e);
