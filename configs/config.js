@@ -1,4 +1,6 @@
 module.exports = {
+    NODE_ENV: process.env.NODE_ENV || 'local',
+
     PORT: process.env.PORT || 5555,
     MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017/test',
 
@@ -22,6 +24,7 @@ module.exports = {
     AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY,
     AWS_S3_BUCKET_URL: process.env.AWS_S3_BUCKET_URL,
 
+    CORS_WHITE_LIST: process.env.CORS_WHITE_LIST,
 };
 //MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017/test',
 //PORT: process.env.PORT || 5555,
