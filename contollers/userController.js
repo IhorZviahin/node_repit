@@ -7,10 +7,32 @@ const {Users} = require("../database");
 
 async function getFindUsers(req, res, next) {
     try {
-        console.log(req.query)
-        const users = await userService.getAllUsers(req.query).exec();
-        const UserForResponse = users.map(user => userPresenter(user));
-        res.json(UserForResponse);
+        // вариант 1  то как показывал максим
+        //console.log(req.query)
+        //const users = await userService.getAllUsers(req.query).exec(); // c поиском через квери Метод exec() выполняет поиск сопоставления регулярного выражения в указанной строке. Возвращает массив с результатами или null.
+
+        // вариант 2 то как показывал Витя пагинация, мб как вариант если нету фильтра а нужна просто пагинация
+
+        // let {page = 1, perPage = 5} = req.query;
+        //
+        // const skip = (page - 1) * perPage // расчет сколько мы елемнтов пропускам что бы показать следущюю порцию
+        //
+        // const users = await userService.getAllUsers().skip(skip).limit(perPage)
+        // const usersCount = await userService.getAllUsersCount()
+        //
+        // const UserForResponse = users.map(user => userPresenter(user));
+        //
+        // res.json(
+        //     {
+        //         page,
+        //         perPage,
+        //         Data:UserForResponse,
+        //         count: usersCount
+        //     });
+
+        const users = await userService.getUsersWithPagination(req.query)
+        res.json(users)
+
     } catch (e) {
         next(e)
     }
